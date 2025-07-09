@@ -1,10 +1,12 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ImageBackground, Image,ScrollView,TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, ImageBackground, Image,ScrollView,TouchableOpacity , ActivityIndicator} from 'react-native';
 import { AuthContext } from '../contexts/AuthContext';
 import axios from 'axios';
 import { BASE_URL, image_bg, social_media } from '../constants/Constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PasswordInput from '../components/PasswordInput';
+import Toast from 'react-native-toast-message';
+import CustomModal from '../components/CustomModal';
 
 
 export default function LoginScreen({ navigation }) {
@@ -12,11 +14,12 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isVisible, setIsVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
       if (email && password){
-        console.log(email, password)
+        setLoading(true);
         const response = await axios.post(
           BASE_URL+"login",
           {
@@ -30,16 +33,67 @@ export default function LoginScreen({ navigation }) {
           }
         );
         
-
-        console.log(response.data)
+        //console.log('Response from login:', response.data);
         if(response.status == 200 && response.data['session_id']){
-          login(response.data)
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: 'Login successful!',
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            bottomOffset: 50,
+            onHide: () => {
+              setLoading(false);
+              login(response.data);
+            },
+          });
+        }else{
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: response.data.message || 'Login failed. Please try again.',
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            bottomOffset: 50,
+            onHide: () => {
+              setLoading(false);
+            },  
+          });
         }
 
 
+      }else{
+        
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'Please fill in all fields.',
+          position: 'top',
+          visibilityTime: 3000,
+          autoHide: true,
+          bottomOffset: 50,
+          onHide: () => {
+            setLoading(false);
+          },
+        });
+      
       }
       
     } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Failed to login. Please try again.',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        bottomOffset: 50,
+        onHide: () => {
+          setLoading(false);
+        },
+      });
       console.error('Error posting data:', error);
     }
   };
@@ -114,6 +168,7 @@ export default function LoginScreen({ navigation }) {
 
           </View>
         </ImageBackground>
+        <CustomModal isVisible={loading} onClose={()=>setLoading(false)}/>
       </ScrollView>
     </SafeAreaView>
   );

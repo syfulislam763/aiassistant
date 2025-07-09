@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ImageBackground, Image, Button, TouchableOpacity} from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { Ellipse1, Group2, Group3, image_bg, welcome_image } from '../constants/Constants'
+import { image_bg, welcome_image } from '../constants/Constants'
 
 const LayoutScreen = ({navigation}) => {
   return (
@@ -31,7 +31,8 @@ const LayoutScreen = ({navigation}) => {
                 width: '100%',
                 height: 200,
                 justifyContent:'center',
-                alignItems:'center'
+                alignItems:'center',
+                paddingHorizontal:20
             }}>
                 <Text style={{color:'#1F41BB', fontSize:40}}>
                     Make your order smoother with AI Assistant!
@@ -63,7 +64,9 @@ const styles = StyleSheet.create({
         display:'flex',
         flexDirection:'row',
         justifyContent:'space-around',
-        alignItems:'center'
+        alignItems:'center',
+        width:'100%',
+        paddingHorizontal:20
     },
     btn:{
         width:150,

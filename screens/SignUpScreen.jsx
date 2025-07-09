@@ -5,7 +5,8 @@ import axios from 'axios';
 import { BASE_URL, image_bg, social_media } from '../constants/Constants';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import PasswordInput from '../components/PasswordInput';
-
+import Toast from 'react-native-toast-message';
+import CustomModal from '../components/CustomModal';
 
 export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -14,14 +15,28 @@ export default function SignUpScreen({ navigation }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isVisible1, setIsVisible1] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const isok = {
     "Account created successfully!": true
   }
+  const isUserExist = {
+    "This username already exist": true
+  }
+
+  const clearFields = () => {
+    setEmail('');
+    setUsername('');
+    setPassword('');
+    setConfirmPassword('');
+    setIsVisible1(false);
+    setIsVisible2(false);
+    setLoading(false);
+  };
 
   const handleSignUp = async () => {
     try{
       if (username && password && password === confirmPassword) {
+        setLoading(true);
         const response = await axios.post(
           BASE_URL+"create_user/",
           {
@@ -36,18 +51,72 @@ export default function SignUpScreen({ navigation }) {
           }
         );
         
-        
+    
         if(isok[response.data.message]){
-          navigation.navigate('Login');
+          
+          Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: response.data.message,
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            bottomOffset: 50,
+            onHide: () => {
+              navigation.navigate('Login');
+              clearFields();
+            },
+          });
+        }else if(isUserExist[response.data.message]){
+          Toast.show({
+            type: 'info',
+            text1: 'Info',
+            text2: response.data.message,
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            bottomOffset: 50,
+            onHide: () => {
+              navigation.navigate('Login');
+              clearFields();  
+            },
+          });
         }else{
-          console.log("something went wrong!!");
+          Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: response.data.message,
+            position: 'top',
+            visibilityTime: 3000,
+            autoHide: true,
+            bottomOffset: 50,
+            onHide: () => {
+              clearFields();
+            },
+          });
         }
         
       }else{
-        console.log({email, username})
+        Toast.show({
+          type:'error',
+          text1: 'Error',
+          text2: 'Please fill in all fields and ensure passwords match.',
+          position: 'top',
+          visibilityTime: 3000,
+          autoHide: true,
+          bottomOffset: 50,
+        })
       }
     }catch(e){
-      console.log("Error", e)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'An error occurred while creating your account. Please try again.',
+        position: 'top',
+        visibilityTime: 3000,
+        autoHide: true,
+        bottomOffset: 50,
+      });
     }
   };
 
@@ -71,7 +140,7 @@ export default function SignUpScreen({ navigation }) {
               alignItems:'center'
             }}>
               <Text style={{fontSize:35,color:'#1F41BB',fontWeight:'600'}}>Create Account</Text>
-              <Text style={{fontSize:20, marginTop:10}}>Create an account so you can take advantage of new AI solution!</Text>
+              <Text style={{fontSize:20, marginTop:10, textAlign:'center'}}>Create an account so you can take advantage of new AI solution!</Text>
             </View>
 
             
@@ -133,6 +202,7 @@ export default function SignUpScreen({ navigation }) {
           </View>
         </ImageBackground>
       </ScrollView>
+      <CustomModal isVisible={loading} onClose={setLoading} />
     </SafeAreaView>
   );
 }

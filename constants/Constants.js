@@ -9,5 +9,4 @@ export const Group2 = require('../assets/Group2.png')
 export const Group3 = require('../assets/Group3.png')
 export const image_bg = require('../assets/image_bg.png')
 
-export const BASE_URL = "https://d36f-103-200-36-177.ngrok-free.app/"
-
+export const BASE_URL = "https://order-assistant.onrender.com/"

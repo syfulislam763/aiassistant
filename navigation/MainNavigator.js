@@ -19,19 +19,26 @@ export default function MainNavigator() {
   return (
     <Drawer.Navigator>
       <Drawer.Screen 
+
         options={{
-        headerRight: ({navigation}) => (
-          <View style={{paddingRight:10}}>
-            <Text style={{color:'#1F41BB', fontWeight:'bold', fontSize:17}}>{user?.username}</Text>
-          </View>
+          headerStyle: {
+            backgroundColor: '#35DCE8',
+            borderBottomLeftRadius: 15,
+            borderBottomRightRadius: 15,
+            height: 100,
+          },
+          headerRight: ({navigation}) => (
+            <View style={{paddingRight:30}}>
+              <Text style={{color:'#000', fontWeight:'bold', fontSize:17}}>{user?.username}</Text>
+            </View>
           )
         }} 
         name="AI Assistant" 
         component={ChatbotScreen} 
 
       />
-      <Drawer.Screen name="Explore" component={ExploreScreen} />
-      <Drawer.Screen name="Who we are?" component={AboutScreen} />
+      {/* <Drawer.Screen name="Explore" component={ExploreScreen} />
+      <Drawer.Screen name="Who we are?" component={AboutScreen} /> */}
       <Drawer.Screen options={{headerShown:false}} name='Logout' component={LogoutScreen}/>
     </Drawer.Navigator>
   );
